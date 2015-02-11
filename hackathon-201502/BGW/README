@@ -1,0 +1,13 @@
+Compile:
+
+ftn -O3 -xAVX -openmp bgw.f90 -o bgw.x
+
+Run:
+
+./bgw.x
+
+Rules:
+
+Don't change the value of parameter or array initialized at the top of the program.
+
+You can change the order of the loops and operations, but you can not change the function on the code. I.e. it must give the same answer, even if values in arrays were to change. 
