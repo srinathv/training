@@ -10,6 +10,10 @@ The code prints out a total run-time and timing for 3 sections (these individual
 
 Rules:
 
+Run on a single Edison compute node.
+
+You may add OpenMP (or other shared memory parallelism model) to the code, but do not add MPI.
+
 Don't change the value of parameter or array initialized at the top of the program. Done change the overall timer (the individual code section timers can be moved and are there just to help you get started)
 
 You can change the order of the loops and operations, but you can not change the function on the code. I.e. it must give the same answer, even if values in arrays were to change. 

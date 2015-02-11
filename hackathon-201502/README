@@ -1,3 +1,5 @@
 NERSC Hackathon -- February 2015
 
 VH1: hydrodynamics code often used in Cray Reveal training sessions
+
+BGW: Small ~300 line kernel from BerkeleyGW. Unoptimized. 
