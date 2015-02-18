@@ -277,7 +277,7 @@ if(mype == 0) then
   run_time = end_time - start_time
   write(8,*) 'successful stop at cycle number', ncycle
   write(8,*) 'elapsed time = ',run_time, ' seconds'
-  write(8,"('speed = ',f5.1,' kz/s/pe')") 1.0e-3*zones/run_time
+  write(8,"('speed = ',f8.1,' kz/s/pe')") 1.0e-3*zones/run_time
   close( 8 )
 
   if (ndim==3) then ! open up a file to store data needed for post-processing
