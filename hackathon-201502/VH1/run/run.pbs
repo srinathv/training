@@ -9,8 +9,7 @@
 
 export OMP_NUM_THREADS=1
 
-EXE=vh1-mpi-cray+pat
-#EXE=vh1-mpi-cray
+EXE=vh1-mpi-$(tr A-Z a-z <<< $PE_ENV)
 # Turn off the stop message from the Cray compiler
 export NO_STOP_MESSAGE=1
 

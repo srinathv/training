@@ -1,24 +1,20 @@
 #!/bin/bash --login
-# This is an example batch script for running with SLURM on a Cray XC30
+# This is an example batch script for running with PBS on a Cray XC30
 
-# Generic SLURM options
-#SBATCH --job-name=vh1
-#SBATCH --ntasks=24
-#SBATCH --ntasks-per-node=24
-#SBATCH --time=0:05:00
-#SBATCH --partition=debugq
-
-#SBATCH --export=NONE
+# Generic PBS options
+#PBS -q debug
+#PBS -l mppwidth=24
+#PBS -l walltime=00:10:00
+#PBS -N vh1
 
 export OMP_NUM_THREADS=1
 
-EXE=vh1-mpi-cray+pat
-#EXE=vh1-mpi-cray
+EXE=vh1-mpi-$(tr A-Z a-z <<< $PE_ENV)+pat
 # Turn off the stop message from the Cray compiler
 export NO_STOP_MESSAGE=1
 
 # Change to the same directory that sbatch was run in
-#ROOTDIR=${SLURM_SUBMIT_DIR}
+cd $PBS_O_WORKDIR
 ROOTDIR=`pwd`
 echo ${ROOTDIR}
 RUNDIR=${ROOTDIR}
