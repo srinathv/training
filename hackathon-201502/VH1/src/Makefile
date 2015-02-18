@@ -16,8 +16,9 @@ FFLAGS_INTEL = -O2
 FFLAGS_CRAY = -e mf
 FFLAGS_GNU = -O2
 
-#FFLAGS_REVEAL = -h profile_generate -h pl=vhone.pl
+ifeq ($(LC_ENV),cray)
 FFLAGS_REVEAL = -h pl=vhone.pl -h profile_generate
+endif
 
 F90 = ftn
 FFLAGS = ${FFLAGS_REVEAL} ${FFLAGS_$(PE_ENV)}
@@ -43,7 +44,11 @@ VHOBJS = vh1mods.o zonemod.o vhone.o dtcon.o dump.o images.o init.o prin.o \
 	$(F90) $(FFLAGS) -c $<
 
 ${EXE}:	$(VHOBJS)
-	$(LDR) $(LDRFLAGS) -o ${EXE} $(VHOBJS) $(LIBS); pat_build -w ${EXE}; mv ${EXE} ${EXE}+pat ../bin
+	$(LDR) $(LDRFLAGS) -o ${EXE} $(VHOBJS) $(LIBS)
+	rm -f $@+pat
+	pat_build -w ${EXE}
+	mkdir -p ../bin
+	mv ${EXE} ${EXE}+pat ../bin
 #
 #
 clean:
