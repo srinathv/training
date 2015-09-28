@@ -163,10 +163,11 @@ time_c = 0D0
         call timget(starttime_ch)
  
         schdt_array = 0D0
+!$omp parallel 
         do ifreq=1,nFreq
 
             schDt = (0D0,0D0)
-
+!$omp do private(my_igp)
             do my_igp = 1, ngpown
 
               if (my_igp .gt. ncouls .or. my_igp .le. 0) cycle
@@ -182,8 +183,10 @@ time_c = 0D0
               enddo
               schdt_array(ifreq) = schdt_array(ifreq) + schDtt
             enddo
+!$omp end do nowait
 
         enddo
+!$omp end parallel
 
         call timget(endtime_ch)
         time_b = time_b + endtime_ch - starttime_ch
