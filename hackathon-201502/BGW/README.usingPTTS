@@ -4,5 +4,6 @@ ifort -O3 -g -xAVX -openmp bgw.f90 -o bgw.x
 
 source ../../../../host-vars.sh (csh)
 
-sample -r ./bgw.x
+/project/projectdirs/acts/vadlaman/ptts/1.2.2/bin/sample -r <appplication>
+
 
