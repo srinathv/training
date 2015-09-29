@@ -1,6 +1,6 @@
 Compile:
 
-ftn -O3 -xAVX -openmp bgw.f90 -o bgw.x
+ifort -O3 -xAVX -openmp bgw.f90 -o bgw.x
 
 Run:
 
