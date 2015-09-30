@@ -184,12 +184,12 @@ time_c = 0D0
               igmax=ncouls
 
               schDtt = (0D0,0D0)
-!              do ig = 1, igmax
-!                I_epsRggp_int = I_epsR_array(ig,my_igp,ifreq)
-!                I_epsAggp_int = I_epsA_array(ig,my_igp,ifreq)
-!                schD=I_epsRggp_int-I_epsAggp_int
-!                schDtt = schDtt + matngmatmgpD(ig,my_igp)*schD
-!              enddo
+              do ig = 1, igmax
+                I_epsRggp_int = I_epsR_array(ig,my_igp,ifreq)
+                I_epsAggp_int = I_epsA_array(ig,my_igp,ifreq)
+                schD=I_epsRggp_int-I_epsAggp_int
+                schDtt = schDtt + matngmatmgpD(ig,my_igp)*schD
+              enddo
 
               schdt_array(ifreq) = schdt_array(ifreq) + schDtt
             enddo
