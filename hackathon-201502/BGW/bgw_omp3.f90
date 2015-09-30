@@ -32,8 +32,8 @@ real(kind(1.0d0)) :: starttime, endtime
 real(kind(1.0d0)) :: starttime_a, endtime_a
 real(kind(1.0d0)) :: time_a
 real(kind(1.0d0)) :: starttime_ch, endtime_ch
-real(kind(1.0d0)) :: time_b 
-real(kind(1.0d0)) :: time_c 
+real(kind(1.0d0)) :: time_b
+real(kind(1.0d0)) :: time_c
 logical :: flag_occ
 
 time_a = 0D0
@@ -62,7 +62,7 @@ time_c = 0D0
       ALLOCATE(ekq(number_bands,1))
       dw = -10D0
       do ijk = 1, number_bands
-        ekq(ijk,1) = dw 
+        ekq(ijk,1) = dw
         dw = dw + 1D0
       enddo
 
@@ -75,8 +75,6 @@ time_c = 0D0
       I_epsR_array = (0.5D0,0.5D0)
       ALLOCATE(I_epsA_array(ncouls,ngpown,nFreq))
       I_epsA_array = (0.5D0,-0.5D0)
-
-      ALLOCATE(schDtttAry(ncouls)) 
 
       ALLOCATE(matngmatmgpD(ncouls,ngpown))
 
@@ -162,12 +160,12 @@ time_c = 0D0
         sch2Di = (0D0,0D0)
 
 ! JRD: Now do CH term
-          
+
         ALLOCATE(schDt_array(nFreq))
         schDt_array(:) = 0D0
 
         call timget(starttime_ch)
- 
+
         schdt_array = 0D0
 !$omp parallel
         do ifreq=1,nFreq
@@ -192,7 +190,7 @@ time_c = 0D0
 !                schD=I_epsRggp_int-I_epsAggp_int
 !                schDtt = schDtt + matngmatmgpD(ig,my_igp)*schD
 !              enddo
-             
+
               schdt_array(ifreq) = schdt_array(ifreq) + schDtt
             enddo
 !$omp end do nowait
@@ -210,7 +208,7 @@ time_c = 0D0
             cedifft_zb = dFreqGrid(ifreq)
             cedifft_coh = CMPLX(cedifft_zb,0D0)- dFreqBrd(ifreq)
 
-            if (ifreq .ne. 1) then 
+            if (ifreq .ne. 1) then
               cedifft_zb_right = cedifft_zb
               cedifft_zb_left = dFreqGrid(ifreq-1)
               schDt_right = schDt
@@ -240,7 +238,7 @@ time_c = 0D0
                   if (intfact .gt. 1d4) intfact = 1d4
                   intfact = log(intfact)
                   schDt_lin3 = (schDt_left + schDt_lin2*(-wxi(iw)-cedifft_zb_left))*intfact
-                else 
+                else
                   schDt_lin3 = (schDt_left + schDt_lin2*(wxi(iw)-cedifft_zb_left))*intfact
                 endif
                 schDt_lin3 = schDt_lin3 + schDt_lin
@@ -255,7 +253,7 @@ time_c = 0D0
         time_c = time_c + endtime_ch - starttime_ch
 
         do iw = 1, nfreqeval
-            
+
           achDtemp(iw) = achDtemp(iw) + schDi(iw)
           achDtemp_cor(iw) = achDtemp_cor(iw) + schDi_cor(iw)
           achDtemp_corb(iw) = achDtemp_corb(iw) + schDi_corb(iw)
