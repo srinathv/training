@@ -4,6 +4,20 @@ ifort -O3 -g -xAVX -openmp bgw.f90 -o bgw.x
 
 source ../../../../host-vars.sh (csh)
 
-/project/projectdirs/acts/vadlaman/ptts/1.2.2/bin/sample -r <appplication>
+** remember to compiler with "-g" to get source code mapping
+
+/project/projectdirs/acts/vadlaman/ptts/babbage/1.2.2/bin/sample -r <appplication>
+/project/projectdirs/acts/vadlaman/ptts/babbage/1.2.2/bin/report -i sample.smp
+/project/projectdirs/acts/vadlaman/ptts/babbage/1.2.2/bin/view-static -f report.tsr 
+
+* this will produce: 
+   acumem-report.html
+   acumem-report
+
+
+This is a html based report that can be shipped locally and viewed with Firefox.
+
+
+
 
 
