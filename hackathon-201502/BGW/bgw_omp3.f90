@@ -14,12 +14,15 @@ integer :: number_bands,nvband,ncouls,ngpown,nfreqeval,nFreq
 integer :: my_igp, ig, igmax
 complex(kind((1.0d0,1.0d0))) :: achstemp,achxtemp,mygpvar1,schstemp,schs,sch,scht
 complex(kind((1.0d0,1.0d0))), allocatable :: leftvector(:,:), rightvector(:,:), I_epsR_array(:,:,:), I_epsA_array(:,:,:),matngmatmgpD(:,:),dFreqBrd(:)
-complex(kind((1.0d0,1.0d0))) :: schD,achsDtemp,schsDtemp
+!complex(kind((1.0d0,1.0d0))) :: schD,achsDtemp,schsDtemp
+complex(kind((1.0d0,1.0d0))) :: achsDtemp,schsDtemp
 complex(kind((1.0d0,1.0d0))), allocatable :: achDtemp(:),ach2Dtemp(:),achDtemp_cor(:),achDtemp_corb(:)
 complex(kind((1.0d0,1.0d0))), allocatable :: schDi(:),schDi_cor(:),schDi_corb(:),sch2Di(:), schDt_array(:)
-complex(kind((1.0d0,1.0d0))) :: schDt,schDtt,sch2dt,sch2dtt,I_epsRggp_int, I_epsAggp_int
-!dir$ attributes align:64 :: I_epsRggp_int
-!dir$ attributes align:64 :: I_epsAggp_int
+!complex(kind((1.0d0,1.0d0))) :: schDt,schDtt,sch2dt,sch2dtt,I_epsRggp_int, I_epsAggp_int
+complex(kind((1.0d0,1.0d0))) :: schDt,schDtt,sch2dt,sch2dtt
+
+
+real(kind(1.0d0)) :: schD,I_epsRggp_int, I_epsAggp_int,schDtt_real,schDtt_aimag
 
 complex(kind((1.0d0,1.0d0))) :: schDttt,schDttt_cor
 complex(kind((1.0d0,1.0d0))), allocatable :: schDtttAry
@@ -184,14 +187,28 @@ time_c = 0D0
               igmax=ncouls
 
               schDtt = (0D0,0D0)
+              schDtt_real= 0D0
+              schDtt_aimag= 0D0
+
+!REAL piece
               do ig = 1, igmax
-                I_epsRggp_int = I_epsR_array(ig,my_igp,ifreq)
-                I_epsAggp_int = I_epsA_array(ig,my_igp,ifreq)
+                I_epsRggp_int = REAL(I_epsR_array(ig,my_igp,ifreq))
+                I_epsAggp_int = REAL( I_epsA_array(ig,my_igp,ifreq))
                 schD=I_epsRggp_int-I_epsAggp_int
-                schDtt = schDtt + matngmatmgpD(ig,my_igp)*schD
+                schDtt_real = schDtt_real + REAL(matngmatmgpD(ig,my_igp))*schD
               enddo
 
-              schdt_array(ifreq) = schdt_array(ifreq) + schDtt
+!Imaginary piece
+!REAL peice
+              do ig = 1, igmax
+                I_epsRggp_int = AIMAG(I_epsR_array(ig,my_igp,ifreq))
+                I_epsAggp_int = AIMAG(I_epsA_array(ig,my_igp,ifreq))
+                schD=I_epsRggp_int-I_epsAggp_int
+                schDtt_aimag = schDtt_aimag + AIMAG(matngmatmgpD(ig,my_igp))*schD
+              enddo
+
+
+              schdt_array(ifreq) = schdt_array(ifreq) + CMPLX(schDtt_real,schDtt_aimag)
             enddo
 !$omp end do nowait
         enddo
