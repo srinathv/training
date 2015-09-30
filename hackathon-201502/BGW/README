@@ -16,9 +16,14 @@ You may add OpenMP (or other shared memory parallelism model) to the code, but d
 
 Don't change the value of parameter or array initialized at the top of the program. Done change the overall timer (the individual code section timers can be moved and are there just to help you get started)
 
-You can change the order of the loops and operations, but you can not change the function on the code. I.e. it must give the same answer, even if values in arrays were to change. 
+You can change the order of the loops and operations, but you can not change the function on the code. I.e. it must give the same answer, even if values in arrays were to change.
 
 
 ifort -O3 -g -xAVX -openmp bgw_omp1.f90 -o bgw_omp1.x
 export OMP_NUM_THREADS=16
 ./bgw_omp1.x < --- ~20 sec. on SNB on Babbage
+export OMP_NESTED=TRUE
+./bgw_omp2.x < --- ~20 sec. on SNB on Babbage
+  No advantage
+
+
