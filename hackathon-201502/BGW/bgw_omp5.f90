@@ -14,11 +14,19 @@ integer :: number_bands,nvband,ncouls,ngpown,nfreqeval,nFreq
 integer :: my_igp, ig, igmax
 complex(kind((1.0d0,1.0d0))) :: achstemp,achxtemp,mygpvar1,schstemp,schs,sch,scht
 complex(kind((1.0d0,1.0d0))), allocatable :: leftvector(:,:), rightvector(:,:), I_epsR_array(:,:,:), I_epsA_array(:,:,:),matngmatmgpD(:,:),dFreqBrd(:)
-complex(kind((1.0d0,1.0d0))) :: schD,achsDtemp,schsDtemp
+!complex(kind((1.0d0,1.0d0))) :: schD,achsDtemp,schsDtemp
+complex(kind((1.0d0,1.0d0))) :: achsDtemp,schsDtemp
 complex(kind((1.0d0,1.0d0))), allocatable :: achDtemp(:),ach2Dtemp(:),achDtemp_cor(:),achDtemp_corb(:)
 complex(kind((1.0d0,1.0d0))), allocatable :: schDi(:),schDi_cor(:),schDi_corb(:),sch2Di(:), schDt_array(:)
-complex(kind((1.0d0,1.0d0))) :: schDt,schDtt,sch2dt,sch2dtt,I_epsRggp_int, I_epsAggp_int
+!complex(kind((1.0d0,1.0d0))) :: schDt,schDtt,sch2dt,sch2dtt,I_epsRggp_int, I_epsAggp_int
+complex(kind((1.0d0,1.0d0))) :: schDt,schDtt,sch2dt,sch2dtt
+
+
+real(kind(1.0d0)) :: schD,schDtt_real,schDtt_aimag
+real(kind(1.0d0)), ALLOCATABLE :: I_epsRggp_int(:), I_epsAggp_int(:)
+
 complex(kind((1.0d0,1.0d0))) :: schDttt,schDttt_cor
+complex(kind((1.0d0,1.0d0))), allocatable :: schDtttAry
 complex(kind((1.0d0,1.0d0))) :: schDt_avg, schDt_right, schDt_left, schDt_lin, schDt_lin2, schDt_lin3
 complex(kind((1.0d0,1.0d0))) :: cedifft_coh,cedifft_cor
 real(kind(1.0d0)) :: cedifft_zb,intfact,cedifft_zb_left,cedifft_zb_right
@@ -30,13 +38,11 @@ real(kind(1.0d0)) :: time_a
 real(kind(1.0d0)) :: starttime_ch, endtime_ch
 real(kind(1.0d0)) :: time_b
 real(kind(1.0d0)) :: time_c
-logical :: flag_occ, omp_get_nested
-
+logical :: flag_occ
 
 time_a = 0D0
 time_b = 0D0
 time_c = 0D0
-
 
 ! We start off in the body of loop over the various tasks. Each MPI task has communicated data it owns to everyone
 
@@ -116,6 +122,12 @@ time_c = 0D0
       ALLOCATE(wxi(nfreqeval))
       wxi=0D0
 
+
+      ALLOCATE(I_epsRggp_int(ncouls))
+      I_epsRggp_int=0D0
+      ALLOCATE(I_epsAggp_int(ncouls))
+      I_epsAggp_int=0D0
+
       write(6,*) "Starting loop"
 
       call timget(starttime)
@@ -166,25 +178,45 @@ time_c = 0D0
 
         schdt_array = 0D0
 !$omp parallel
-        write(*,*) "Is OMP_NESTED being used? ", OMP_GET_NESTED()
         do ifreq=1,nFreq
 
             schDt = (0D0,0D0)
-!$omp do private(my_igp,schDtt) collapse(2)
+!$omp do private(my_igp,ig,schD,I_epsRggp_int,I_epsAggp_int,schDtt)
             do my_igp = 1, ngpown
-
-!              if (my_igp .gt. ncouls .or. my_igp .le. 0) cycle
+!      number_bands = 96
+!      nvband = 4
+!      ncouls = 8000
+!      ngpown = 100
+!      nFreq = 240
+!      nfreqeval = 6000
+!sv3              if (my_igp .gt. ncouls .or. my_igp .le. 0) cycle
 
               igmax=ncouls
 
               schDtt = (0D0,0D0)
+              schDtt_real= 0D0
+              schDtt_aimag= 0D0
+
+!REAL piece
+             I_epsRggp_int(:)=REAL(I_epsR_array(:,my_igp,ifreq))
+             I_epsAggp_int(:) = REAL(I_epsA_array(:,my_igp,ifreq))
+
               do ig = 1, igmax
-                I_epsRggp_int = I_epsR_array(ig,my_igp,ifreq)
-                I_epsAggp_int = I_epsA_array(ig,my_igp,ifreq)
-                schD=I_epsRggp_int-I_epsAggp_int
-                schDtt = schDtt + matngmatmgpD(ig,my_igp)*schD
+                schD=I_epsRggp_int(ig)-I_epsAggp_int(ig)
+                schDtt_real = schDtt_real + REAL(matngmatmgpD(ig,my_igp))*schD
               enddo
-              schdt_array(ifreq) = schdt_array(ifreq) + schDtt
+
+!Imaginary piece
+
+             I_epsRggp_int(:)=AIMAG(I_epsR_array(:,my_igp,ifreq))
+             I_epsAggp_int(:) =AIMAG(I_epsA_array(:,my_igp,ifreq))
+              do ig = 1, igmax
+                schD=I_epsRggp_int(ig)-I_epsAggp_int(ig)
+                schDtt_aimag = schDtt_aimag + AIMAG(matngmatmgpD(ig,my_igp))*schD
+              enddo
+
+
+              schdt_array(ifreq) = schdt_array(ifreq) + CMPLX(schDtt_real,schDtt_aimag)
             enddo
 !$omp end do nowait
         enddo
