@@ -25,5 +25,7 @@ export OMP_NUM_THREADS=16
 export OMP_NESTED=TRUE
 ./bgw_omp2.x < --- ~20 sec. on SNB on Babbage
   No advantage
+./bgw_omp3.x < --- ~26 sec....slow down with REAL/IMAGINARY split
+./bgw_winner.x < --- ~6.5 sec ...from a NERSC hackathon
 
 

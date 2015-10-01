@@ -1,8 +1,9 @@
 
 
-CMD='ifort -O3 -xHost -openmp -align 64 -g'
+CMD='ifort -O3 -xHost -openmp -g'
+#CMD='ifort -O3 -xHost -openmp -align array64byte -g'
 
-bgws='bgw bgw_omp1 bgw_omp2 bgw_omp3 bgw_omp4 bgw_omp5'
+bgws='bgw bgw_omp1 bgw_omp2 bgw_omp3 bgw_winner'
 
 for prefix in ${bgws};
   do
